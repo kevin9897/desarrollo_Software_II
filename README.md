@@ -2,59 +2,48 @@
 
 Proyecto Final – Desarrollo de Software II
 
-## Stack
-| Capa | Tecnología | Despliegue |
-|------|------------|------------|
-| Presentación | React + Vite, HTML, CSS | Vercel |
-| Lógica de negocio | Python (FastAPI + SQLAlchemy) | Render (Docker) |
-| Datos | PostgreSQL | Render |
-| Local | Docker Compose | – |
+## Repositorios
+Este es el **repositorio principal**. Une los dos repositorios del sistema (como submódulos de Git) y contiene el `docker-compose.yml` que levanta todo junto.
+
+| Repositorio | Contenido | Despliegue |
+|---|---|---|
+| [desarrollo_Software_II](https://github.com/kevin9897/desarrollo_Software_II) | docker-compose, documentación | – |
+| [sgb-backend](https://github.com/kevin9897/sgb-backend) | API Python (FastAPI + SQLAlchemy) | Render (Docker + PostgreSQL) |
+| [sgb-frontend](https://github.com/kevin9897/sgb-frontend) | React + Vite, HTML, CSS | Vercel |
 
 ## Arquitectura
-Arquitectura **por capas (N-Tier, 3 capas)**. El backend es un monolito organizado en capas:
-`routers` (HTTP) → `services` (reglas de negocio) → `models` (BD).
+Arquitectura **por capas (N-Tier, 3 capas)**:
+Presentación (React) → Lógica de negocio (FastAPI) → Datos (PostgreSQL).
+Dentro del backend: `routers` → `services` → `models`.
 
-## Estructura
+## Clonar el proyecto completo
+```bash
+git clone --recurse-submodules https://github.com/kevin9897/desarrollo_Software_II.git
+cd desarrollo_Software_II
 ```
-backend/
-  app/
-    main.py          punto de entrada FastAPI (registra routers, CORS, jobs)
-    config.py        variables de entorno
-    database.py      conexión a PostgreSQL
-    security.py      login / JWT / roles
-    constants.py     días de préstamo, renovaciones máximas, tabla de multas
-    jobs.py          tareas automáticas (perdidos >120 días, vencer reservas, multas)
-    utils.py         cálculo de días hábiles y fechas
-    models/          tablas de la BD
-      usuario.py       estudiante, profesor, bibliotecario
-      recurso.py       recursos de las 6 colecciones + ejemplares + estados
-      prestamo.py      préstamos, reservas y renovaciones
-      multa.py         multas
-    schemas/         validación de datos de entrada/salida (Pydantic)
-    services/        reglas de negocio
-    routers/         endpoints REST (/api/v1/...)
-  seed.py          datos iniciales (50 estudiantes, 10 profesores, 3 bibliotecarios, colecciones)
-  tests/           pruebas de reglas de negocio
-
-frontend/
-  src/
-    main.jsx         punto de entrada React
-    App.jsx          rutas de la aplicación
-    api.js           llamadas HTTP al backend
-    AuthContext.jsx  sesión del usuario
-    index.css        estilos globales
-    components/      componentes reutilizables (Navbar, Table, Modal, EstadoBadge)
-    pages/           vistas (Login, Dashboard, Recursos, Usuarios, Préstamos, Reservas, Multas)
-
-docs/arquitectura.md
-docker-compose.yml   entorno local completo
-render.yaml          despliegue backend + BD en Render
+Si ya lo clonaste sin `--recurse-submodules`:
+```bash
+git submodule update --init --recursive
 ```
 
 ## Ejecución local
 ```bash
-copy backend\.env.example backend\.env
+cp backend/.env.example backend/.env
 docker compose up --build
 ```
 - Frontend: http://localhost:5173
 - API / Swagger: http://localhost:8000/docs
+
+## Trabajar con los submódulos
+Cada carpeta (`backend/`, `frontend/`) es un repositorio independiente:
+```bash
+cd backend
+git add . && git commit -m "mensaje" && git push   # sube al repo sgb-backend
+cd ..
+git add backend && git commit -m "Actualiza backend" && git push   # registra la nueva versión en el principal
+```
+Traer los últimos cambios de todo:
+```bash
+git pull
+git submodule update --remote --merge
+```
