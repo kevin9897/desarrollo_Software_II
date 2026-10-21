@@ -18,7 +18,10 @@ services:
   backend:
     build: ./backend
     container_name: sgb_backend
-    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://sgb:sgb123@db:5432/sgb_madeira}
+      SECRET_KEY: ${SECRET_KEY:-clave_secreta_universidad_madeira}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8000:8000"
