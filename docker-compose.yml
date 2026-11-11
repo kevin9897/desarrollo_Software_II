@@ -4,6 +4,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     container_name: sgb_backend
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     env_file:
       - path: ./backend/.env
         required: false
@@ -13,7 +16,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SUPABASE_URL: ${SUPABASE_URL:-}
       SECRET_KEY: ${SECRET_KEY}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,https://sgb-frontend-production.up.railway.app}
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8000:8000"
